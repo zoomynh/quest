@@ -1,0 +1,25 @@
+<!doctype html>
+<html lang="uk">
+  <head>
+    <meta charset="UTF-8" />
+    <title>База СБУ</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <div class="container">
+      <h1>Служба Безпеки України — База співробітників</h1>
+
+      <input
+        type="text"
+        id="search"
+        placeholder="Пошук за ПІБ, званням або посадою"
+      />
+      <button onclick="searchPeople()">Пошук</button>
+
+      <div id="list" class="list"></div>
+      <div id="dossier" class="dossier"></div>
+    </div>
+
+    <script src="script.js"></script>
+  </body>
+</html>

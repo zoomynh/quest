@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="uk">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Доступ СБУ</title>
+    <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body class="login-body">
+    <div class="login-box">
+      <h1>Служба Безпеки України</h1>
+      <p>Завантажте службовий пропуск</p>
+
+      <input type="file" id="image" />
+      <button onclick="scan()">Сканувати пропуск</button>
+      <p id="msg"></p>
+    </div>
+
+    <script>
+      async function scan() {
+        const file = image.files[0];
+        if (!file) return;
+
+        msg.textContent = "Сканування...";
+
+        const {
+          data: { text },
+        } = await Tesseract.recognize(file, "ukr+eng");
+
+        if (text.includes("СЛУЖБА БЕЗПЕКИ УКРАЇНИ")) {
+          localStorage.setItem("auth", "true");
+          location.href = "index.html";
+        } else {
+          msg.textContent = "Доступ заборонено";
+          msg.style.color = "red";
+        }
+      }
+    </script>
+  </body>
+</html>
