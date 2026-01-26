@@ -1,84 +1,79 @@
-// 200+ фонова база + квестова особа
-const firstNames = ["Олександр","Андрій","Роман","Максим","Ігор","Дмитро","Сергій","Віталій"];
-const lastNames = ["Іваненко","Петренко","Ковальчук","Мельник","Шевченко","Бондар","Ткаченко","Кравченко"];
-const ranks = ["Лейтенант", "Старший лейтенант", "Капітан", "Майор", "Підполковник", "Полковник", "Генерал", "Сержант"];
-const positions = [
-  "Аналітичний відділ",
-  "Оперативний відділ",
-  "Кібербезпека",
-  "Контррозвідка",
-  "Адміністративний відділ"
-];
+// script.js
+if (!localStorage.getItem("accessGranted")) {
+    window.location.href = "login.html";
+}
+
+// ===== ПЕРЕВІРКА ДОСТУПУ =====
+if (!localStorage.getItem("accessGranted")) {
+    window.location.href = "login.html";
+}
 
 const people = [];
 
-function rand(arr) { return arr[Math.floor(Math.random() * arr.length)]; }
+function rand(arr) {
+    return arr[Math.floor(Math.random() * arr.length)];
+}
+
+const firstNames = ["Роман","Олександр","Ігор","Андрій","Максим","Сергій","Віталій"];
+const lastNames = ["Іваненко","Петренко","Шевченко","Ковальчук","Мельник","Бондар"];
+const ranks = ["Лейтенант","Капітан","Майор", "Підполковник","Полковник", "Генерал", "Старший лейтенант", "Молодший лейтенант"];
+const positions = ["Аналітичний відділ","Контррозвідка","Кібербезпека","Оперативний відділ"];
 
 for (let i = 0; i < 200; i++) {
-  people.push({
-    name: `${rand(lastNames)} ${rand(firstNames)} ${rand(firstNames)}ович`,
-    callsign: "-",
-    rank: rand(ranks),
-    position: rand(positions),
-    photo: "photos/default.jpg",
-    notes: "Службова інформація"
-  });
+    people.push({
+        name: `${rand(lastNames)} ${rand(firstNames)} ${rand(firstNames)}ович`,
+        callsign: "-",
+        rank: rand(ranks),
+        position: rand(positions)
+    });
 }
 
-// квестова особа
 people.push({
-  name: "Безшкурий Роман Віталійович",
-  callsign: "zoomynh",
-  rank: "Майор",
-  position: "Невідомо",
-  photo: "photos/target.jpg",
-  notes: "Службова інформація"
+    name: "Безшкурий Роман Віталійович",
+    callsign: "zoomynh",
+    rank: "Майор",
+    position: "Невідомо"
 });
 
-// Перевірка авторизації
-if (!localStorage.getItem("auth")) {
-    alert("Доступ заборонено. Спочатку авторизуйтесь.");
-    location.href = "login.html";
+const list = document.getElementById("list");
+const dossier = document.getElementById("dossier");
+
+function renderList(data) {
+    list.innerHTML = "";
+    data.forEach(p => {
+        const div = document.createElement("div");
+        div.className = "person-item";
+        div.textContent = `${p.name} — ${p.rank}`;
+        div.onclick = () => showDossier(p);
+        list.appendChild(div);
+    });
 }
 
-// Пошук
+
+function showDossier(p) {
+    dossier.innerHTML = `
+        <h2>${p.name}</h2>
+        <p><strong>Звання:</strong> ${p.rank}</p>
+        <p><strong>Посада:</strong> ${p.position}</p>
+        <p><strong>Позивний:</strong> ${p.callsign}</p>
+        <hr>
+        <p style="font-size:13px;color:#666">
+            Дані з внутрішньої інформаційної системи.  
+            Рівень доступу обмежений.
+        </p>
+    `;
+}
+
+
 function searchPeople() {
     const q = document.getElementById("search").value.toLowerCase();
-    const list = document.getElementById("list");
-    list.innerHTML = "";
-    const dossier = document.getElementById("dossier");
-    dossier.innerHTML = "";
-
     const filtered = people.filter(p =>
         p.name.toLowerCase().includes(q) ||
         p.rank.toLowerCase().includes(q) ||
         p.position.toLowerCase().includes(q) ||
         p.callsign.toLowerCase().includes(q)
     );
-
-    if (filtered.length === 0) {
-        list.innerHTML = "<p>Нічого не знайдено</p>";
-    }
-
-    filtered.forEach(p => {
-        const div = document.createElement("div");
-        div.className = "person-item";
-        div.textContent = p.name + " — " + p.rank + " — " + p.position;
-        div.onclick = () => showDossier(p);
-        list.appendChild(div);
-    });
+    renderList(filtered);
 }
 
-// Рендер досьє
-function showDossier(p) {
-    const dossier = document.getElementById("dossier");
-    dossier.innerHTML = `
-        <h2>Досьє</h2>
-        <img src="${p.photo}" class="photo">
-        <p><b>ПІБ:</b> ${p.name}</p>
-        <p><b>Позивний:</b> ${p.callsign}</p>
-        <p><b>Звання:</b> ${p.rank}</p>
-        <p><b>Посада:</b> ${p.position}</p>
-        <p><b>Примітки:</b> ${p.notes}</p>
-    `;
-}
+renderList(people);
