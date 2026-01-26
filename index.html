@@ -1,35 +1,34 @@
-<!-- index.html -->
 <!DOCTYPE html>
 <html lang="uk">
 <head>
-    <meta charset="UTF-8">
-    <title>СБУ — Внутрішня система</title>
-    <link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>СБУ — Внутрішня система</title>
+  <link rel="stylesheet" href="style.css" />
 </head>
 <body>
 
-<header>
-    <h1>Служба Безпеки України</h1>
-    <h3 class="subtitle">Внутрішня інформаційна система</h3>
+<header class="topbar">
+  <h1>Служба Безпеки України</h1>
+  <div class="subtitle">Внутрішня інформаційна система</div>
 </header>
 
-<div class="container">
+<main class="container">
+  <section class="left-panel">
+    <input
+      type="text"
+      id="search"
+      class="search"
+      placeholder="Пошук (ПІБ / звання / посада / позивний)"
+      oninput="searchPeople()"
+    />
+    <div id="list" class="list"></div>
+  </section>
 
-    <div class="left-panel">
-        <input
-            type="text"
-            id="search"
-            placeholder="Пошук"
-            oninput="searchPeople()"
-        >
-        <div id="list" class="list"></div>
-    </div>
-
-    <div id="dossier" class="dossier">
-        <p>Оберіть особу зі списку</p>
-    </div>
-
-</div>
+  <section id="dossier" class="dossier">
+    <div class="dossier-hint">Оберіть особу зі списку</div>
+  </section>
+</main>
 
 <script src="script.js"></script>
 </body>

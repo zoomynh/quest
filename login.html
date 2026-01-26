@@ -1,43 +1,55 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="uk">
-<head>
-    <meta charset="UTF-8">
-    <title>Авторизація</title>
-    <link rel="stylesheet" href="style.css">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Авторизація — СБУ</title>
+    <link rel="stylesheet" href="style.css" />
     <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
-</head>
-<body class="login-body">
+  </head>
+  <body class="login-body">
+    <div class="login-box">
+      <h1>Служба Безпеки України</h1>
+      <p class="login-sub">Завантажте зображення пропуску</p>
 
-<div class="login-box">
-    <h1>Служба Безпеки України</h1>
-    <input type="file" id="passFile" accept="image/*">
-    <button onclick="authorize()">Увійти</button>
-    <p id="status"></p>
-</div>
+      <input type="file" id="passFile" accept="image/*" />
+      <button class="btn" onclick="authorize()">Сканувати та увійти</button>
 
-<script>
-async function authorize() {
-    const file = document.getElementById("passFile").files[0];
-    const status = document.getElementById("status");
+      <p id="status" class="login-status"></p>
+    </div>
 
-    if (!file) {
-        status.innerText = "Завантажте зображення";
-        return;
-    }
+    <script>
+      async function authorize() {
+        const file = document.getElementById("passFile").files[0];
+        const status = document.getElementById("status");
 
-    status.innerText = "Сканування...";
+        if (!file) {
+          status.textContent = "Завантажте зображення пропуску";
+          status.className = "login-status err";
+          return;
+        }
 
-    const result = await Tesseract.recognize(file, "ukr+eng");
-    const text = result.data.text.toLowerCase();
+        status.textContent = "Сканування…";
+        status.className = "login-status";
 
-    if (text.includes("служба безпеки україни")) {
-        localStorage.setItem("accessGranted", "true");
-        window.location.href = "index.html";
-    } else {
-        status.innerText = "Доступ заборонено";
-    }
-}
-</script>
+        try {
+          const {
+            data: { text },
+          } = await Tesseract.recognize(file, "ukr+eng");
+          const normalized = (text || "").toLowerCase();
 
-</body>
+          if (normalized.includes("служба безпеки україни")) {
+            localStorage.setItem("accessGranted", "true");
+            window.location.href = "index.html";
+          } else {
+            status.textContent = "Доступ заборонено";
+            status.className = "login-status err";
+          }
+        } catch (e) {
+          status.textContent = "Помилка сканування";
+          status.className = "login-status err";
+        }
+      }
+    </script>
+  </body>
 </html>

@@ -1,79 +1,109 @@
-// script.js
+// ===== ДОСТУП =====
 if (!localStorage.getItem("accessGranted")) {
-    window.location.href = "login.html";
+  window.location.href = "login.html";
 }
 
-// ===== ПЕРЕВІРКА ДОСТУПУ =====
-if (!localStorage.getItem("accessGranted")) {
-    window.location.href = "login.html";
-}
-
+// ===== ДАНІ (200+ генеруємо + 1 квестова) =====
 const people = [];
 
 function rand(arr) {
-    return arr[Math.floor(Math.random() * arr.length)];
+  return arr[Math.floor(Math.random() * arr.length)];
 }
 
-const firstNames = ["Роман","Олександр","Ігор","Андрій","Максим","Сергій","Віталій"];
-const lastNames = ["Іваненко","Петренко","Шевченко","Ковальчук","Мельник","Бондар"];
-const ranks = ["Лейтенант","Капітан","Майор", "Підполковник","Полковник", "Генерал", "Старший лейтенант", "Молодший лейтенант"];
-const positions = ["Аналітичний відділ","Контррозвідка","Кібербезпека","Оперативний відділ"];
+const firstNamesM = ["Олександр","Андрій","Ігор","Дмитро","Сергій","Віталій","Максим","Роман","Євген","Олег"];
+const firstNamesF = ["Олена","Ірина","Анна","Марія","Катерина","Наталія","Оксана","Юлія"];
+const lastNames = ["Іваненко","Петренко","Шевченко","Ковальчук","Мельник","Бондар","Ткаченко","Кравченко","Романюк","Гриценко"];
+const patronymicsM = ["Олександрович","Андрійович","Ігорович","Дмитрович","Сергійович","Віталійович","Максимович","Романович"];
+const patronymicsF = ["Олександрівна","Андріївна","Ігорівна","Дмитрівна","Сергіївна","Віталіївна","Максимівна","Романівна"];
 
-for (let i = 0; i < 200; i++) {
-    people.push({
-        name: `${rand(lastNames)} ${rand(firstNames)} ${rand(firstNames)}ович`,
-        callsign: "-",
-        rank: rand(ranks),
-        position: rand(positions)
-    });
+const ranks = ["Лейтенант","Старший лейтенант","Капітан","Майор", "Підполковник","Полковник","Генерал-майор", "Молодший лейтенант"];
+const positions = ["Аналітичний відділ","Оперативний відділ","Кібербезпека","Контррозвідка","Адміністративний відділ","Відділ зв’язку"];
+
+for (let i = 0; i < 220; i++) {
+  const isFemale = Math.random() < 0.25;
+
+  const fn = isFemale ? rand(firstNamesF) : rand(firstNamesM);
+  const ln = rand(lastNames);
+  const pt = isFemale ? rand(patronymicsF) : rand(patronymicsM);
+
+  people.push({
+    name: `${ln} ${fn} ${pt}`,
+    callsign: "-",
+    rank: rand(ranks),
+    position: rand(positions),
+    photo: "photos/default.jpg",
+    notes: "Службова інформація"
+  });
 }
 
+// КВЕСТОВА ОСОБА
 people.push({
-    name: "Безшкурий Роман Віталійович",
-    callsign: "zoomynh",
-    rank: "Майор",
-    position: "Невідомо"
+  name: "Безшкурий Роман Віталійович",
+  callsign: "zoomynh",
+  rank: "Майор",
+  position: "Невідомо",
+  photo: "photos/roman.jpg",
+  notes: "Інформація обмежена"
 });
 
-const list = document.getElementById("list");
-const dossier = document.getElementById("dossier");
+// ===== UI =====
+const listEl = document.getElementById("list");
+const dossierEl = document.getElementById("dossier");
 
 function renderList(data) {
-    list.innerHTML = "";
-    data.forEach(p => {
-        const div = document.createElement("div");
-        div.className = "person-item";
-        div.textContent = `${p.name} — ${p.rank}`;
-        div.onclick = () => showDossier(p);
-        list.appendChild(div);
-    });
-}
+  listEl.innerHTML = "";
 
+  data.forEach((p) => {
+    const item = document.createElement("div");
+    item.className = "person-item";
+
+    item.innerHTML = `
+      <div>${p.name}</div>
+      <div class="meta">${p.rank} • ${p.position}</div>
+    `;
+
+    item.onclick = () => showDossier(p);
+    listEl.appendChild(item);
+  });
+}
 
 function showDossier(p) {
-    dossier.innerHTML = `
-        <h2>${p.name}</h2>
-        <p><strong>Звання:</strong> ${p.rank}</p>
-        <p><strong>Посада:</strong> ${p.position}</p>
-        <p><strong>Позивний:</strong> ${p.callsign}</p>
-        <hr>
-        <p style="font-size:13px;color:#666">
-            Дані з внутрішньої інформаційної системи.  
-            Рівень доступу обмежений.
-        </p>
-    `;
-}
+  dossierEl.innerHTML = `
+    <h2 class="dossier-title">${p.name}</h2>
 
+    <div class="dossier-grid">
+      <img class="dossier-photo" src="${p.photo}" alt="Фото">
+      <div>
+        <div class="dossier-line"><b>Звання:</b> ${p.rank}</div>
+        <div class="dossier-line"><b>Посада:</b> ${p.position}</div>
+        <div class="dossier-line"><b>Позивний:</b> ${p.callsign}</div>
+        <div class="dossier-line"><b>Примітки:</b> ${p.notes}</div>
+
+        <div class="dossier-note">
+          Дані з внутрішньої інформаційної системи. Рівень доступу обмежений.
+        </div>
+      </div>
+    </div>
+  `;
+}
 
 function searchPeople() {
-    const q = document.getElementById("search").value.toLowerCase();
-    const filtered = people.filter(p =>
-        p.name.toLowerCase().includes(q) ||
-        p.rank.toLowerCase().includes(q) ||
-        p.position.toLowerCase().includes(q) ||
-        p.callsign.toLowerCase().includes(q)
-    );
-    renderList(filtered);
+  const q = document.getElementById("search").value.toLowerCase().trim();
+
+  if (!q) {
+    renderList(people);
+    return;
+  }
+
+  const filtered = people.filter(p =>
+    p.name.toLowerCase().includes(q) ||
+    p.rank.toLowerCase().includes(q) ||
+    p.position.toLowerCase().includes(q) ||
+    p.callsign.toLowerCase().includes(q)
+  );
+
+  renderList(filtered);
 }
 
+// Показати всіх одразу
 renderList(people);
