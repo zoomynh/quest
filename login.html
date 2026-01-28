@@ -40,7 +40,8 @@
 
           if (normalized.includes("служба безпеки україни")) {
           sessionStorage.setItem("accessGranted", "true");
-            window.location.href = "index.html";
+          window.location.replace("index.html");
+
           } else {
             status.textContent = "Доступ заборонено";
             status.className = "login-status err";

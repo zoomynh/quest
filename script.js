@@ -8,14 +8,6 @@
        hint: "..."              // текстова підказка (може натякати що далі)
 */
 
-if (!sessionStorage.getItem("accessGranted")) {
-  window.location.replace("login.html");
-}
-
-function logout() {
-  sessionStorage.removeItem("accessGranted");
-  window.location.replace("login.html");
-}
 
 
 const listEl = document.getElementById("list");

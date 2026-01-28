@@ -5,6 +5,12 @@
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <title>СБУ — Внутрішня система</title>
   <link rel="stylesheet" href="style.css" />
+  <script>
+  if (!sessionStorage.getItem("accessGranted")) {
+    window.location.replace("login.html");
+  }
+</script>
+
 </head>
 <body>
 
@@ -12,7 +18,14 @@
   <h1>Служба Безпеки України</h1>
   <div class="subtitle">Внутрішня інформаційна система</div>
 </header>
-<button class="mini-btn" onclick="logout()">Вийти</button>
+<button onclick="logout()" class="mini-btn">Вийти</button>
+<script>
+  function logout() {
+    sessionStorage.removeItem("accessGranted");
+    window.location.replace("login.html");
+  }
+</script>
+
 
 
 <main class="container">
