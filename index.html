@@ -1,50 +1,58 @@
-<!DOCTYPE html>
+<!-- index.html -->
+<!doctype html>
 <html lang="uk">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1"/>
-  <title>СБУ — Внутрішня система</title>
-  <link rel="stylesheet" href="style.css" />
-  <script>
-  if (!sessionStorage.getItem("accessGranted")) {
-    window.location.replace("login.html");
-  }
-</script>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
 
-</head>
-<body>
+    <!-- ЖОРСТКИЙ ГЕЙТ: без доступу одразу на login -->
+    <script>
+      if (!sessionStorage.getItem("accessGranted")) {
+        window.location.replace("login.html");
+      }
+    </script>
 
-<header class="topbar">
-  <h1>Служба Безпеки України</h1>
-  <div class="subtitle">Внутрішня інформаційна система</div>
-</header>
-<button onclick="logout()" class="mini-btn">Вийти</button>
-<script>
-  function logout() {
-    sessionStorage.removeItem("accessGranted");
-    window.location.replace("login.html");
-  }
-</script>
+    <title>СБУ — Внутрішня система</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <header class="topbar">
+      <div class="topbar-row">
+        <div>
+          <h1>Служба Безпеки України</h1>
+          <div class="subtitle">Внутрішня інформаційна система</div>
+        </div>
 
+        <div class="topbar-actions">
+          <button class="btn btn-ghost" onclick="logout()">Вийти</button>
+        </div>
+      </div>
+    </header>
 
+    <main class="container">
+      <section class="left-panel">
+        <input
+          type="text"
+          id="search"
+          class="search"
+          placeholder="Пошук (ПІБ / звання / посада / позивний)"
+          oninput="searchPeople()"
+        />
+        <div id="list" class="list"></div>
+      </section>
 
-<main class="container">
-  <section class="left-panel">
-    <input
-      type="text"
-      id="search"
-      class="search"
-      placeholder="Пошук (ПІБ / звання / посада / позивний)"
-      oninput="searchPeople()"
-    />
-    <div id="list" class="list"></div>
-  </section>
+      <section id="dossier" class="dossier">
+        <div class="dossier-hint">Оберіть особу зі списку</div>
+      </section>
+    </main>
 
-  <section id="dossier" class="dossier">
-    <div class="dossier-hint">Оберіть особу зі списку</div>
-  </section>
-</main>
+    <script>
+      function logout() {
+        sessionStorage.removeItem("accessGranted");
+        window.location.replace("login.html");
+      }
+    </script>
 
-<script src="script.js"></script>
-</body>
+    <script src="script.js"></script>
+  </body>
 </html>
