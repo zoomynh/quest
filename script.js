@@ -8,9 +8,15 @@
        hint: "..."              // текстова підказка (може натякати що далі)
 */
 
-if (!localStorage.getItem("accessGranted")) {
-  window.location.href = "login.html";
+if (!sessionStorage.getItem("accessGranted")) {
+  window.location.replace("login.html");
 }
+
+function logout() {
+  sessionStorage.removeItem("accessGranted");
+  window.location.replace("login.html");
+}
+
 
 const listEl = document.getElementById("list");
 const dossierEl = document.getElementById("dossier");
