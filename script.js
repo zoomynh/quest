@@ -21,6 +21,14 @@ function shuffleArray(arr) {
   return a;
 }
 
+function isZoomUnlocked() {
+  return localStorage.getItem("zoomUnlocked") === "1";
+}
+function setZoomUnlocked() {
+  localStorage.setItem("zoomUnlocked", "1");
+}
+
+
 /* ====== ЗНАЙДЕНІ ЦИФРИ (ПРОГРЕС) ====== */
 function getDigits() {
   try { return JSON.parse(localStorage.getItem("foundDigits") || "[]"); }
@@ -335,7 +343,23 @@ function showDossier(p) {
     : "";
 
   // квестова — замок до коду
-  if (p.locked && digitsString() !== p.accessKey) {
+ if (p.locked && !isZoomUnlocked()) {
+const externalTraceBlock =
+  (p.callsign === "zoomynh" && isZoomUnlocked())
+    ? `
+      <div class="dossier-note">
+        <b>Виявлено зовнішній канал звʼязку:</b><br>
+        Сигнатура не належить жодному з відомих вузлів.<br>
+        Канал активний, але нестабільний.
+        <br><br>
+        <a href="https://ТУТ_ТВІЙ_GITHUB_PAGES" target="_blank" rel="noopener noreferrer">
+          ВСТАНОВИТИ ЗʼЄДНАННЯ ▸
+        </a>
+      </div>
+    `
+    : "";
+
+
     dossierEl.innerHTML = `
       <h2 class="dossier-title">${p.name}</h2>
 
@@ -368,6 +392,7 @@ function showDossier(p) {
       ${hintBlock}
       ${digitBlock}
       ${renderLinks(p)}
+      ${externalTraceBlock}
     `;
     renderDigitsLine();
     return;
@@ -413,10 +438,15 @@ function tryUnlock(correct) {
   if (!val) return;
 
   if (val === correct) {
-    alert("Доступ підтверджено.");
-    const target = people.find(x => x.accessKey === correct);
-    if (target) showDossier(target);
-  } else {
+  alert("Доступ підтверджено.");
+
+  // ✅ ВАЖЛИВО: запам’ятовуємо, що досьє відкрито
+  setZoomUnlocked();
+
+  const target = people.find(x => x.accessKey === correct);
+  if (target) showDossier(target);
+}
+ else {
     alert("Невірний код.");
   }
 }
