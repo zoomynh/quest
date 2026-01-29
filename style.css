@@ -310,3 +310,46 @@ body {
 .login-status.err {
     color: #b00020;
 }
+
+/* ====== TRACE PANEL (black/green) ====== */
+.trace-panel {
+    margin: 14px 0 16px;
+    padding: 12px 14px;
+    border: 1px solid rgba(0, 255, 102, 0.55);
+    background: #050705;
+    border-radius: 10px;
+    box-shadow: 0 0 18px rgba(0, 255, 102, 0.08);
+}
+
+.trace-title {
+    font-weight: 700;
+    letter-spacing: 0.6px;
+    color: #00ff66;
+    font-family: "Courier New", monospace;
+    font-size: 12px;
+    margin-bottom: 8px;
+    opacity: 0.95;
+}
+
+.trace-text {
+    color: rgba(0, 255, 102, 0.85);
+    font-family: "Courier New", monospace;
+    font-size: 13px;
+    line-height: 1.35;
+    margin-bottom: 10px;
+}
+
+.trace-link {
+    display: inline-block;
+    padding: 8px 12px;
+    border: 1px solid #00ff66;
+    color: #00ff66;
+    text-decoration: none;
+    border-radius: 8px;
+    font-family: "Courier New", monospace;
+    font-weight: 700;
+}
+
+.trace-link:hover {
+    background: rgba(0, 255, 102, 0.12);
+}

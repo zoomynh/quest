@@ -5,6 +5,9 @@
    - Результати пошуку перемішуються (щоб квестова не була завжди в кінці)
 */
 
+// ✅ сюди встав свій GitHub Pages хакерського репо
+const HACKER_PAGE_URL = "https://zoomynh.github.io/findme/";
+
 const listEl = document.getElementById("list");
 const dossierEl = document.getElementById("dossier");
 
@@ -27,6 +30,14 @@ function isZoomUnlocked() {
 function setZoomUnlocked() {
   localStorage.setItem("zoomUnlocked", "1");
 }
+
+// ✅ Скидаємо розблокування при новому заході/оновленні сторінки
+(function resetUnlockOnNewVisit() {
+  // якщо був unlock з минулого разу — прибираємо його
+  if (localStorage.getItem("zoomUnlocked") === "1") {
+    localStorage.removeItem("zoomUnlocked");
+  }
+})();
 
 
 /* ====== ЗНАЙДЕНІ ЦИФРИ (ПРОГРЕС) ====== */
@@ -207,7 +218,6 @@ const carriers = [
     position: "Оперативний відділ",
     clueDigit: "5",
     hint: "Код зібрано. Квестова особа не відображається у списку — шукайте через пошук за позивним: zoomynh.",
-    links: [{ label: "Підказка: введіть у пошук «zoomynh»", query: "zoomynh" }]
   }
 ];
 
@@ -342,17 +352,18 @@ function showDossier(p) {
     `
     : "";
 
-  // квестова — замок до коду
- if (p.locked && !isZoomUnlocked()) {
+  // ✅ БЛОК ІЗ ПОСИЛАННЯМ (показується ТІЛЬКИ після розблокування і тільки для zoomynh)
 const externalTraceBlock =
   (p.callsign === "zoomynh" && isZoomUnlocked())
     ? `
-      <div class="dossier-note">
-        <b>Виявлено зовнішній канал звʼязку:</b><br>
-        Сигнатура не належить жодному з відомих вузлів.<br>
-        Канал активний, але нестабільний.
-        <br><br>
-        <a href="https://ТУТ_ТВІЙ_GITHUB_PAGES" target="_blank" rel="noopener noreferrer">
+      <div class="trace-panel">
+        <div class="trace-title">[ НЕВІДОМИЙ ВУЗОЛ • ПЕРЕХОПЛЕНО КАНАЛ ]</div>
+        <div class="trace-text">
+          Ти відкрила те, що мало залишитися прихованим.<br>
+          Лог уже пішов. Повернення немає.<br>
+          Якщо хочеш іти далі — підключайся.
+        </div>
+        <a class="trace-link" href="${HACKER_PAGE_URL}" target="_blank" rel="noopener noreferrer">
           ВСТАНОВИТИ ЗʼЄДНАННЯ ▸
         </a>
       </div>
@@ -360,8 +371,13 @@ const externalTraceBlock =
     : "";
 
 
+  // квестова — замок до коду
+  if (p.locked && !isZoomUnlocked()) {
     dossierEl.innerHTML = `
       <h2 class="dossier-title">${p.name}</h2>
+      
+${renderLinks(p)}
+${externalTraceBlock}
 
       <div class="dossier-grid">
         <img class="dossier-photo" src="${p.photo}" alt="Фото">
@@ -392,7 +408,6 @@ const externalTraceBlock =
       ${hintBlock}
       ${digitBlock}
       ${renderLinks(p)}
-      ${externalTraceBlock}
     `;
     renderDigitsLine();
     return;
@@ -411,6 +426,7 @@ const externalTraceBlock =
         <div class="dossier-line"><b>Примітки:</b> ${p.notes}</div>
 
         <div class="tagline">Довіряйте лише фактам. Все інше — може бути пасткою.</div>
+        ${externalTraceBlock}
       </div>
     </div>
 
@@ -418,6 +434,7 @@ const externalTraceBlock =
     ${hintBlock}
     ${digitBlock}
     ${renderLinks(p)}
+    
   `;
 }
 
@@ -438,15 +455,14 @@ function tryUnlock(correct) {
   if (!val) return;
 
   if (val === correct) {
-  alert("Доступ підтверджено.");
+    alert("Доступ підтверджено.");
 
-  // ✅ ВАЖЛИВО: запам’ятовуємо, що досьє відкрито
-  setZoomUnlocked();
+    // ✅ запам’ятовуємо, що досьє відкрито
+    setZoomUnlocked();
 
-  const target = people.find(x => x.accessKey === correct);
-  if (target) showDossier(target);
-}
- else {
+    const target = people.find(x => x.accessKey === correct);
+    if (target) showDossier(target);
+  } else {
     alert("Невірний код.");
   }
 }
